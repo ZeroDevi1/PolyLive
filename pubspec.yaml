@@ -11,14 +11,6 @@ dependencies:
   http: ^0.13.5
   logging: ^1.1.1
   crypto: ^3.0.2
-  # Video
-  video_player: ^2.5.1
-  chewie: ^1.4.0
-  # video player needed
-  better_player: ^0.0.83
-  flutter_barrage: ^0.5.2
-  screen_brightness: ^0.2.2
-  volume_controller: ^2.0.6
   flutter:
     sdk: flutter
 

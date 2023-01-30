@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 import 'package:poly_live/common/api/huya.dart';
 
-import '../../media_player.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -84,7 +83,7 @@ class HomeView extends GetView<HomeController> {
                 // 发送请求
                 var roomId = _textController.text;
                 var url = await parseHuyaUrl(roomId);
-                Get.to(() => MediaPlayerView(url));
+
               },
             ),
           ],
