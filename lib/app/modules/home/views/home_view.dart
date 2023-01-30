@@ -5,82 +5,84 @@ import 'package:get/get.dart';
 import 'package:poly_live/utils/huya.dart';
 
 import '../controllers/home_controller.dart';
-import 'package:bruno/bruno.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
-
+   HomeView({Key? key}) : super(key: key);
+  final _textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     var selectIndex = 0.obs;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('HomeView'),
         centerTitle: true,
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'HomeView is working',
           style: TextStyle(fontSize: 20),
         ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () {
-        BrnMiddleInputDialog(
-            title: '请输入房间号',
-            hintText: '提示信息',
-            cancelText: '取消',
-            confirmText: '确定',
-            maxLength: 1000,
-            maxLines: 2,
-            barrierDismissible: false,
-            inputEditingController: TextEditingController()..text = '',
-            textInputAction: TextInputAction.done,
-            onConfirm: (value) {
-             if (kDebugMode) {
-               print(value);
-             }
-            if(value.isNotEmpty){
-              parseHuyaUrl(value);
-            }
-             Navigator.pop(context);
-            },
-            onCancel: () {
-              BrnToast.show("取消", context);
-              Navigator.pop(context);
-            }).show(context);
+        _showDialog(context);
       },
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: BrnBottomTabBar(
-          fixedColor: Colors.blue,
-          currentIndex: selectIndex.value,
-          badgeColor: Colors.red,
-          items: const [
-            BrnBottomTabBarItem(
-              icon: Icon(
-                Icons.live_tv,
-                color: Colors.yellow,
-                size: 24.0,
-              ),
-              title: Text("虎牙")
-            ),
-            BrnBottomTabBarItem(
-                icon: Icon(
-                  Icons.live_tv,
-                  color: Colors.yellow,
-                  size: 24.0,
-                ),
-                title: Text("斗鱼")
-            ),
-            BrnBottomTabBarItem(
-                icon: Icon(
-                  Icons.live_tv,
-                  color: Colors.yellow,
-                  size: 24.0,
-                ),
-                title: Text("哔哩哔哩")
-            ),
-          ]),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'Business',
+          ),
+        ],
+      ),
     );
   }
+  Future<void> _showDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('请输入房间号'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: _textController,
+                  decoration: InputDecoration(
+                    hintText: 'lck',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('确认'),
+              onPressed: () async {
+                // 发送请求
+                var roomId = _textController.text;
+                parseHuyaUrl(roomId);
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
