@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:poly_live/app/modules/search/view.dart';
-import 'package:poly_live/common/models/liveroom.dart';
+import 'package:poly_live/common/models/live_room.dart';
 import 'package:poly_live/common/widgets/empty_view.dart';
 import 'package:poly_live/common/widgets/room_card.dart';
 import 'package:provider/provider.dart';
@@ -50,9 +50,9 @@ class _FavoritePageState extends State<FavoritePage> {
         enablePullDown: true,
         header: const WaterDropHeader(),
         controller: refreshController,
-        // onRefresh: () => favorite.onRefresh().then((value) {
-        //   refreshController.refreshCompleted();
-        // }),
+        onRefresh: () => favorite.onRefresh().then((value) {
+          refreshController.refreshCompleted();
+        }),
         child: favorite.roomList.isNotEmpty
             ? MasonryGridView.count(
                 padding: const EdgeInsets.all(8),
@@ -82,7 +82,8 @@ class _FavoritePageState extends State<FavoritePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(roomInfo.title),
-        content: const Text('是否取消收藏？'),
+        content: Text(
+            '${'RoomId'.tr}: ${roomInfo.roomId}\n${'Platform'.tr}:${roomInfo.platform.tr}\n${'Name'.tr}:${roomInfo.nick}\n${'Title'.tr}:${roomInfo.title}'),
         actions: [
           TextButton(
               onPressed: () {

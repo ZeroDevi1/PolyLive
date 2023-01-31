@@ -73,7 +73,7 @@ Future<String> parseHuyaUrl(String roomInfo) async {
     // 把 ctype 参数和值通过正则删除
     lineData = lineData.replaceAll(RegExp(r'ctype=\w+&'), '');
     // 输出最终的直播地址
-    Log().i(lineData);
+    Log.i(lineData);
     return lineData;
   }
   return '';

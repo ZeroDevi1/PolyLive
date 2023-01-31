@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:poly_live/common/models/liveroom.dart';
+import 'package:poly_live/common/api/live_api.dart';
+import 'package:poly_live/common/models/live_room.dart';
 import 'package:poly_live/common/utils/log.dart';
 import 'package:poly_live/common/utils/pref_util.dart';
 
@@ -23,22 +24,75 @@ class FavoriteProvider with ChangeNotifier {
 
   Future<void> onRefresh() async {
     _loadRoomList();
+    await  _getRoomInfoFromApi();
   }
 
-  Future<void> removeRoom(RoomInfo roomInfo) async {
-    Log().d('removeRoom: ${roomInfo.roomId}');
-  }
 
   Future<void> moveRoomToTop(RoomInfo roomInfo) async {
-    Log().d('moveRoomToTop: ${roomInfo.roomId}');
+    Log.d('moveRoomToTop: ${roomInfo.roomId}');
+    final index = _roomList.indexWhere((element) =>
+    element.roomId == roomInfo.roomId);
+    if (index == -1) {
+      return;
+    }
+    _roomList.removeAt(index);
+    _roomList.insert(0, roomInfo);
+    _saveToPref();
+    notifyListeners();
   }
 
   void _loadRoomList() {
     _roomList.clear();
     _onlineRoomList.clear();
-    var prefList = PrefUtil.getStringList('favorite') ?? [];
+    var prefList = PrefUtil.getStringList('favorites') ?? [];
     _roomList.addAll(prefList.map((e) => RoomInfo.fromJson(jsonDecode(e))));
     _onlineRoomList.addAll(
         _roomList.where((element) => element.liveStatus == LiveStatus.live));
+  }
+
+  // 判断是否已经收藏
+  bool isFavorite(String roomId) {
+    return _roomList.any((element) => element.roomId == roomId);
+  }
+
+  // 移出收藏
+  void removeRoom(RoomInfo roomInfo) {
+    _roomList.removeWhere((element) => element.roomId == roomInfo.roomId);
+    _onlineRoomList.removeWhere((element) => element.roomId == roomInfo.roomId);
+    _saveToPref();
+    notifyListeners();
+  }
+
+  // 添加收藏
+  void addRoom(RoomInfo roomInfo) {
+    if (roomInfo.title.isEmpty || roomInfo.cover.isEmpty ||
+        roomInfo.avatar.isEmpty) {
+      return;
+    }
+    // 判断是否已经收藏
+    if (isFavorite(roomInfo.roomId)) {
+      return;
+    }
+    _roomList.add(roomInfo);
+    if (roomInfo.liveStatus == LiveStatus.live) {
+      _onlineRoomList.add(roomInfo);
+    }
+    _saveToPref();
+    notifyListeners();
+  }
+
+  // 保存到本地
+  _saveToPref() {
+    PrefUtil.setStringList(
+        'favorites', _roomList.map((e) => jsonEncode(e.toJson())).toList());
+  }
+
+  // 从服务器获取直播间信息
+  Future<void> _getRoomInfoFromApi() async {
+    for (int i = 0; i < _roomList.length; i++) {
+      _roomList[i] = await LiveApi.getRoomInfoApi(_roomList[i]);
+    }
+    notifyListeners();
+    _saveToPref();
   }
 }

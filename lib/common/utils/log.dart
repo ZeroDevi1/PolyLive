@@ -3,9 +3,7 @@ import 'package:logging/logging.dart';
 class Log {
   static final Log _singleton = Log._internal();
 
-  factory Log() {
-    return _singleton;
-  }
+  static Log get instance => _singleton;
 
   Log._internal() {
     Logger.root.level = Level.ALL;
@@ -14,20 +12,20 @@ class Log {
     });
   }
 
-  void d(String message) {
-    _log(Level.FINE, message);
+  static void d(String message) {
+    instance._log(Level.FINE, message);
   }
 
-  void i(String message) {
-    _log(Level.INFO, message);
+  static void i(String message) {
+    instance._log(Level.INFO, message);
   }
 
-  void w(String message) {
-    _log(Level.WARNING, message);
+  static void w(String message) {
+    instance._log(Level.WARNING, message);
   }
 
-  void e(String message) {
-    _log(Level.SEVERE, message);
+  static void e(String message) {
+    instance._log(Level.SEVERE, message);
   }
 
   void _log(Level level, String message) {
