@@ -1,5 +1,8 @@
 {
   "site": {
     "huya": "huya"
-  }
+  },
+  "favorite": "favorite",
+  "setting": "setting",
+  "search": "search"
 }

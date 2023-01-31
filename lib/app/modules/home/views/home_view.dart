@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:poly_live/app/modules/favorite/index.dart';
 
 import 'package:poly_live/common/api/huya.dart';
 
@@ -11,40 +12,29 @@ class HomeView extends GetView<HomeController> {
   HomeView({Key? key}) : super(key: key);
   final _textController = TextEditingController();
 
+  Widget get body => [
+    const FavoritePage(key: Key('FavoritePage')),
+    const FavoritePage(key: Key('FavoritePage')),
+  ][controller.selectIndex.value];
+
   @override
   Widget build(BuildContext context) {
-    var selectIndex = 0.obs;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HomeView'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text(
-          'HomeView is working',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showDialog(context);
-        },
-        child: const Icon(Icons.add),
-      ),
+      body: body,
       bottomNavigationBar: Obx(() => BottomNavigationBar(
-            currentIndex: selectIndex.value,
+            currentIndex: controller.selectIndex.value,
             onTap: (index) {
-              selectIndex.value = index;
+              controller.selectIndex.value = index;
             },
-            items: const [
+            items:  [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: '首页',
+                icon: const Icon(Icons.favorite_rounded),
+                label: 'favorite'.tr,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.inbox_sharp),
-                label: '我的',
+                icon: const Icon(Icons.settings_rounded),
+                label: 'setting'.tr,
               ),
             ],
           )),
@@ -57,7 +47,7 @@ class HomeView extends GetView<HomeController> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('请输入房间号'),
+          title: const Text('请输入房间号'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[

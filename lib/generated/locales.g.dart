@@ -12,13 +12,22 @@ class AppTranslation {
 class LocaleKeys {
   LocaleKeys._();
   static const site_huya = 'site_huya';
+  static const favorite = 'favorite';
+  static const setting = 'setting';
+  static const search = 'search';
 }
 
 class Locales {
   static const zh_CN = {
     'site_huya': 'huya',
+    'favorite': '关注',
+    'setting': '设置',
+    'search': '搜索',
   };
   static const en_US = {
     'site_huya': 'huya',
+    'favorite': 'favorite',
+    'setting': 'setting',
+    'search': 'search',
   };
 }
